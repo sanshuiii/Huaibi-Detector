@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /*标题*/
+        h1{
+            color: #f44336; /* 设置标题颜色 */
+            text-align: center; /* 设置标题文本居中对齐 */
+            font-size: 2em; /* 设置标题字体大小 */
+            margin-top: 20px; /* 设置标题上边距 */
+        }
+        /*设置页面背景色*/
+        body{
+            background-color: #f9f9f9;
+        }
+        /* 设置表格样式 */
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        /* 表头样式 */
+        th {
+            font-size: 1.2em;
+            font-weight: bold;
+            background-color: #f2f2f2;
+            }
+        /* 排名列样式 */
+        td:first-child {
+            width: 10%;
+        }
+        /* 名字列样式 */
+        td:nth-child(2) {
+            width: 40%;
+        }
+        /* 数值列样式 */
+        td:nth-child(3) {
+            width: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 align="center">Usage of Machine</h1>
+    <a href="http://10.127.30.11:12600/user" class="button">Switch</a>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>ID</th>
+                <th>IP</th>
+                <th>Memory Usage</th>
+                <th>last Update Time</th>
+            </tr>
+        </thead>
+    </table>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            var timestamp = new Date().getTime();
+            $.getJSON("/static/memory_machine.json", {t: timestamp}, function(data){
+                var items = [];
+                
+                $.each(data, function(i, item){
+                    console.log(item);
+                    items.push("<tr>");
+                    items.push("<td>" + (i + 1) + "</td>");
+                    items.push("<td>" + item.name + "</td>");
+                    items.push("<td>" + '10.127.30.' + item.ip);
+                    items.push("<td>" + item.value + "</td>");
+                    items.push("<td>" + item.time + "</td>");
+                    items.push("</tr>");
+                });
+                $("#data-table").append(items.join(""));
+            });
+        });
+    </script>
+</body>
+</html>
