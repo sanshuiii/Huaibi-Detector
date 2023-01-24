@@ -38,3 +38,6 @@ mv config_sample.py config.py
 5. Run data collector (catch_huaibi.py) and webserver (web_server.py). Recommended in a tmux session.
 
 6. See the result on ```localhost:port```
+
+# Note
+This code is for A6000 clusters only. With other GPUs there might be errors. For more detailed personalization please refer to ```catch_huaibi.py``` and modify the code before ```gpu.update()```.

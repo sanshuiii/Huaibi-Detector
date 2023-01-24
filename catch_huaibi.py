@@ -72,13 +72,20 @@ for i in suffix:
 while(1):
     for gpu in tqdm(gpus):
         res = os.popen('ssh -o \"StrictHostKeyChecking no\" ' + gpu.address + ' ' + python_path + ' -m gpustat').read().split()
-        name = res[0]
-        last_update_time = ' '.join(res[1:6])
-        cuda_version = res[6]
-        memory_usage = ' '.join(res[16:20])
-        usr = res[21:]
-        usr_split = [(re.search(r'(.*)\(', x).group(1), int(re.search(r'\((\d+)', x).group(1))) for x in usr]
-        del usr
+        if len(res) == 0 or res[10] != '6000':
+            name = 'Unknown'
+            last_update_time = 'Unknown'
+            cuda_version = 'Unknown'
+            memory_usage = '99999 MB / 24576 MB'
+            usr_split = []
+        else:
+            name = res[0]
+            last_update_time = ' '.join(res[1:6])
+            cuda_version = res[6]
+            memory_usage = ' '.join(res[16:20])
+            usr = res[21:]
+            usr_split = [(re.search(r'(.*)\(', x).group(1), int(re.search(r'\((\d+)', x).group(1))) for x in usr]
+            del usr
 
         gpu.update(name, last_update_time, cuda_version, memory_usage, usr_split)
 
@@ -98,7 +105,7 @@ while(1):
     sorted_data = sorted(gpus, key=lambda x: int(x.memory_usage.split()[0]), reverse=False)
     new_memory = []
     for gpu in sorted_data:
-        new_memory.append({'name': gpu.name, 'ip':gpu.ip, 'value': gpu.memory_usage, 'time': gpu.last_update_time})
+        new_memory.append({'name': gpu.name, 'ip':prefix+str(gpu.ip), 'value': gpu.memory_usage, 'time': gpu.last_update_time})
     json_data = json.dumps(new_memory)
     with open('./static/memory_machine.json', 'w') as f:
         f.write(json_data)
